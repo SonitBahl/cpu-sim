@@ -1,41 +1,44 @@
 #include <iostream>
-#include "headers/gates.h"
-
+#include <bitset>
+#include "headers/flipflops.h"
 using namespace std;
 
-void test_binary_gate(const string& gate_name, bool (*gate_func)(bool, bool)) {
-    cout << "=== " << gate_name << " Gate Truth Table ===\n";
-    cout << "A B | OUT\n";
-    cout << "-----------\n";
+void test_register() {
+    Register8 reg;
+    bool CLK = 0;
+    bool LOAD = 1;
 
-    for (int a = 0; a <= 1; ++a) {
-        for (int b = 0; b <= 1; ++b) {
-            bool result = gate_func(a, b);
-            cout << a << " " << b << " |  " << result << "\n";
-        }
-    }
-    cout << "\n";
+    cout << "Writing 0b10101010 to register...\n";
+    reg.update(0b10101010, CLK, LOAD);
+    CLK = 1; reg.update(0b10101010, CLK, LOAD); // Rising edge
+    cout << "Register output: " << bitset<8>(reg.output()) << endl;
+
+    cout << "\nChanging input to 0b11111111 but disabling LOAD...\n";
+    LOAD = 0;
+    reg.update(0b11111111, CLK, LOAD);
+    cout << "Register held value: " << bitset<8>(reg.output()) << endl;
 }
 
-void test_not_gate() {
-    cout << "=== NOT Gate Truth Table ===\n";
-    cout << "A | OUT\n";
-    cout << "--------\n";
+void test_gates() {
+    cout << "=== NOT Gate ===\n";
+    for (int a = 0; a <= 1; ++a)
+        cout << "NOT " << a << " = " << not_gate(a) << endl;
 
-    for (int a = 0; a <= 1; ++a) {
-        bool result = not_gate(a);
-        cout << a << " |  " << result << "\n";
-    }
+    cout << "\n=== AND Gate ===\n";
+    for (int a = 0; a <= 1; ++a)
+        for (int b = 0; b <= 1; ++b)
+            cout << a << " AND " << b << " = " << and_gate(a, b) << endl;
 
-    cout << "\n";
+    cout << "\n=== XOR Gate ===\n";
+    for (int a = 0; a <= 1; ++a)
+        for (int b = 0; b <= 1; ++b)
+            cout << a << " XOR " << b << " = " << xor_gate(a, b) << endl;
 }
 
 int main() {
-    test_not_gate();
-    test_binary_gate("NAND", nand_gate);
-    test_binary_gate("AND", and_gate);
-    test_binary_gate("OR", or_gate);
-    test_binary_gate("XOR", xor_gate);
-
+    cout << "⚙️  CPU Simulation - Logic Layer Test\n\n";
+    test_gates();
+    cout << "\n-----------------------------\n";
+    test_register();
     return 0;
 }

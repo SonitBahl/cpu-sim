@@ -2,6 +2,7 @@
 #include <bitset>
 #include "headers/flipflops.h"
 #include "headers/adder.h"
+#include "headers/ripple_adder.h"
 
 using namespace std;
 
@@ -71,6 +72,22 @@ void test_adders() {
     }
 }
 
+void test_ripple_adder() {
+    RippleAdder4 adder;
+    cout << "\n=== 4-Bit Ripple Carry Adder ===\n";
+    cout << " A    B  |  SUM  Cout\n";
+    cout << "----------------------\n";
+
+    for (int A = 0; A < 16; ++A) {
+        for (int B = 0; B < 16; ++B) {
+            auto result = adder.add(A, B, 0);
+            cout << " " << bitset<4>(A) << " + " << bitset<4>(B)
+                 << " | " << bitset<4>(result.sum)
+                 << "   " << result.carry_out << "\n";
+        }
+    }
+}
+
 // ----------------------------
 // Main
 // ----------------------------
@@ -82,6 +99,8 @@ int main() {
     test_register();
     cout << "\n-----------------------------\n";
     test_adders();
+    cout << "\n-----------------------------\n";
+    test_ripple_adder();
 
     return 0;
 }
